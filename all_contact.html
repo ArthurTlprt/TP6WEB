@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+    <link rel="stylesheet" href="css/main.css" media="screen" title="no title" charset="utf-8">
+    <title>all</title>
+  </head>
+  <body>
+    <div class="content">
+      <div class="header">
+        <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+          <a class="pure-menu-heading" href="">TP6 WEB</a>
+
+          <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a href="contact.html" class="pure-menu-link">Contact</a></li>
+            <li class="pure-menu-item"><a href="all_contact.html" class="pure-menu-link">All</a></li>
+          </ul>
+        </div>
+      </div>
+      <h3 class="marketing-header">All my contacts</h3>
+      <table class="pure-table">
+          <thead>
+              <tr>
+                  <th>name</th>
+                  <th>mail</th>
+                  <th>text</th>
+                  <th>id</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+              </tr>
+          </thead>
+          <tbody id="myTbody">
+          </tbody>
+      </table>
+    </div>
+    <script src="javascripts/jquery.min.js" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="javascripts/main.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $.post('http://localhost/web/TPSQL/find_all.php',{req : 'all'}, function(data){
+            data = JSON.parse(data);
+            for(var i in data){
+              $("#myTbody").append(
+                "<tr>" +
+                "<td>" + data[i].name + "</td>" +
+                "<td>" + data[i].mail + "</td>" +
+                "<td>" + data[i].message + "</td>" +
+                "<td>" + data[i].id + "</td>" +
+                "<td class=\"edit\">" + data[i].id + "</td>" +
+                "<td class=\"delete\">" + data[i].id + "</td>" +
+                "</tr>"
+              );
+            }
+          }, 'text');
+
+          $("table").on('click', '.edit', function(){
+            console.log($(this).text());
+            $.post('http://localhost/web/TPSQL/find_all.php',{req : 'edit', id : $(this).text()}, function(data){
+              console.log(data);
+              data = JSON.parse(data);
+              $('.content').append("<form class=\"pure-form\" method=\"post\" action=\"submit_contact.php\"><fieldset class=\"pure-group\"><input name=\"username\" id=\"name\" type=\"text\" class=\"pure-input-1-2\" placeholder=\"Username\" value=\""+data[0].name+"\"><input name=\"email\" id=\"email\" type=\"email\" class=\"pure-input-1-2\" placeholder=\"Email\"></fieldset><fieldset class=\"pure-group\"><textarea id=\"text\" name=\"text\" class=\"pure-input-1-2\" rows=\"10\" placeholder=\"Textareas work too\"></textarea></fieldset><input type=\"submit\" class=\"pure-button pure-input-1-2 pure-button-primary\" value=\"Sign in\"><input id=\"abort\" class=\"pure-button pure-input-1-2 button-error pure-button\" value=\"Abort\"></form>")
+            })
+          });
+          $("table").on('click', '.delete', function(){
+            console.log($(this).text());
+          })
+      });
+    </script>
+  </body>
+</html>
